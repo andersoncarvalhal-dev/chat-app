@@ -77,11 +77,9 @@ socket.on('stop typing', () => {
   typingIndicator.style.display = 'none';
 });
 
-// Recebendo mensagens
-socket.on('chat message', (data) => {
+// Função auxiliar para desenhar uma mensagem no ecrã
+function renderMessage(data) {
   const item = document.createElement('li');
-  
-  // Proteção contra injeção de código (XSS) e formatação
   const safeText = data.text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   
   if (data.user === 'Sistema') {
@@ -99,24 +97,35 @@ socket.on('chat message', (data) => {
   
   messages.appendChild(item);
   window.scrollTo(0, document.body.scrollHeight);
+}
+
+// NOVO: Receber o histórico ao entrar
+socket.on('chat history', (historyArray) => {
+  historyArray.forEach(msg => {
+    renderMessage(msg);
+  });
 });
 
-// 1. Quando o Socket se reconectar com sucesso, reenvia o nome automaticamente
+// Receber mensagens novas em tempo real
+socket.on('chat message', (data) => {
+  renderMessage(data);
+});
+
+// 1. Quando o Socket se reconectar com sucesso
 socket.on('connect', () => {
   if (username) {
+    // Se quiser, pode limpar a lista antiga de mensagens aqui para não duplicar, 
+    // mas por agora vamos focar em reconectar o utilizador.
     socket.emit('join', username);
-    socket.emit('stop typing'); // Garante que não fica travado
+    socket.emit('stop typing');
   }
 });
 
-// 2. Acorda o sistema quando volta ao Chrome e limpa o "digitando" quando sai
+// 2. Acorda o sistema quando volta ao Chrome
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
-    if (socket.disconnected) {
-      socket.connect(); // Apenas manda conectar, o evento 'connect' acima fará o resto
-    }
+    if (socket.disconnected) socket.connect();
   } else {
-    // Quando minimiza o Chrome, avisa os outros para parar o "digitando"
     if (username) socket.emit('stop typing');
   }
 });
