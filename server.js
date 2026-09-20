@@ -12,11 +12,11 @@ const io = new Server(server, {
   }
 });
 
-// Define a pasta 'public' para servir os arquivos CSS e JS na rota /chat
-app.use('/chat', express.static(path.join(__dirname, 'public')));
+// Define a pasta 'public' para servir os arquivos
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Muda a rota principal de '/' para '/chat'
-app.get('/chat', (req, res) => {
+// Rota principal (página inicial)
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
