@@ -69,7 +69,7 @@ input.addEventListener('input', () => {
 });
 
 socket.on('typing', (user) => {
-  typingIndicator.innerText = `${user} está a escrever...`;
+  typingIndicator.innerText = `${user} Está Digitando...`;
   typingIndicator.style.display = 'block';
 });
 
