@@ -2,7 +2,7 @@
 
 Este é um projeto de chat cliente-servidor orientado a eventos utilizando Node.js e Socket.IO.
 
-**🟢 Projeto Online:** Acesse [https://chat-app-y554.onrender.com](https://chat-app-y554.onrender.com) para testar a aplicação a funcionar.
+**🟢 Projeto Online:** Acesse [https://chat.pimencon.com.br/](https://chat.pimencon.com.br/) para testar a aplicação a funcionar.
 
 ## Como rodar a aplicação localmente (Pré-requisitos)
 - Node.js instalado na máquina.
