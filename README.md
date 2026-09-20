@@ -2,11 +2,13 @@
 
 Este é um projeto de chat cliente-servidor orientado a eventos utilizando Node.js e Socket.IO.
 
-## Pré-requisitos
+**🟢 Projeto Online:** Acesse [https://chat-app-y554.onrender.com](https://chat-app-y554.onrender.com) para testar a aplicação a funcionar.
+
+## Como rodar a aplicação localmente (Pré-requisitos)
 - Node.js instalado na máquina.
 - Porta 3000 disponível.
 
-## Como rodar a aplicação
+## Passos para execução local
 1. Abra o terminal na raiz da pasta do projeto.
 2. Instale as dependências executando o comando:
    npm install
