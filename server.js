@@ -12,15 +12,14 @@ const io = new Server(server, {
   }
 });
 
-// Define a pasta 'public' para servir os arquivos
+
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Rota principal (página inicial)
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-
-// Lógica de WebSocket
+ 
 io.on('connection', (socket) => {
   socket.on('join', (username) => {
     socket.username = username || 'Anônimo';
@@ -44,7 +43,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// O alojamento injeta a porta correta na variável process.env.PORT
+
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
