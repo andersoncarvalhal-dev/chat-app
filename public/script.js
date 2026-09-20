@@ -100,3 +100,18 @@ socket.on('chat message', (data) => {
   messages.appendChild(item);
   window.scrollTo(0, document.body.scrollHeight);
 });
+
+// Verifica quando o utilizador sai e volta para a aba do chat
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    // Se a página voltou a ficar visível e o socket estiver desconectado
+    if (!socket.connected) {
+      socket.connect(); // Força a reconexão imediatamente
+      
+      // Se o utilizador já tinha escolhido um nome, reenvia para o servidor
+      if (username) {
+        socket.emit('join', username);
+      }
+    }
+  }
+});
