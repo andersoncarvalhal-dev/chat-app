@@ -3,18 +3,41 @@ const form = document.getElementById('form');
 const input = document.getElementById('input');
 const messages = document.getElementById('messages');
 
-const username = prompt("Digite seu nome de usuário:") || "Anônimo";
+// Elementos da janela de login
+const loginOverlay = document.getElementById('login-overlay');
+const usernameInput = document.getElementById('username-input');
+const joinBtn = document.getElementById('join-btn');
 
-socket.emit('join', username);
+let username = '';
 
+// Função para validar o nome e entrar
+function joinChat() {
+  const name = usernameInput.value.trim();
+  if (name) {
+    username = name;
+    loginOverlay.style.display = 'none'; // Esconde a janela flutuante
+    socket.emit('join', username);       // Avisa o servidor
+  }
+}
+
+// Escuta o clique no botão ou a tecla Enter
+joinBtn.addEventListener('click', joinChat);
+usernameInput.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    joinChat();
+  }
+});
+
+// Evento de envio do formulário de chat
 form.addEventListener('submit', function(e) {
   e.preventDefault();
-  if (input.value) {
+  if (input.value && username) {
     socket.emit('chat message', input.value);
     input.value = '';
   }
 });
 
+// Evento de recebimento de mensagem
 socket.on('chat message', function(data) {
   const item = document.createElement('li');
   
