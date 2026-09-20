@@ -101,17 +101,22 @@ socket.on('chat message', (data) => {
   window.scrollTo(0, document.body.scrollHeight);
 });
 
-// Verifica quando o utilizador sai e volta para a aba do chat
+// 1. Quando o Socket se reconectar com sucesso, reenvia o nome automaticamente
+socket.on('connect', () => {
+  if (username) {
+    socket.emit('join', username);
+    socket.emit('stop typing'); // Garante que não fica travado
+  }
+});
+
+// 2. Acorda o sistema quando volta ao Chrome e limpa o "digitando" quando sai
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
-    // Se a página voltou a ficar visível e o socket estiver desconectado
-    if (!socket.connected) {
-      socket.connect(); // Força a reconexão imediatamente
-      
-      // Se o utilizador já tinha escolhido um nome, reenvia para o servidor
-      if (username) {
-        socket.emit('join', username);
-      }
+    if (socket.disconnected) {
+      socket.connect(); // Apenas manda conectar, o evento 'connect' acima fará o resto
     }
+  } else {
+    // Quando minimiza o Chrome, avisa os outros para parar o "digitando"
+    if (username) socket.emit('stop typing');
   }
 });

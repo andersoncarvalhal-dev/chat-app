@@ -35,6 +35,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
+    // NOVO: Se o utilizador cair, manda limpar o "Digitando..." no ecrã dos outros
+    socket.broadcast.emit('stop typing'); 
+
     if (socket.username) {
       io.emit('chat message', { user: 'Sistema', text: `${socket.username} saiu do chat.` });
     }
