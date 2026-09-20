@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
+    
     <div id="login-overlay">
       <div id="login-modal">
         <h2>Bem-vindo!</h2>
@@ -17,9 +18,26 @@
     </div>
 
     <ul id="messages"></ul>
+    
+    <!-- NOVO: Indicador de digitação -->
+    <div id="typing-indicator"></div>
+
     <form id="form" action="">
-      <input id="input" autocomplete="off" placeholder="Digite sua mensagem..." />
-      <button>Enviar</button>
+      <!-- NOVO: Menu de Emojis -->
+      <button type="button" id="emoji-btn">😀</button>
+      <div id="emoji-picker" class="hidden">
+        <span class="emoji">😂</span>
+        <span class="emoji">❤️</span>
+        <span class="emoji">😍</span>
+        <span class="emoji">👍</span>
+        <span class="emoji">🙏</span>
+        <span class="emoji">🔥</span>
+        <span class="emoji">😊</span>
+        <span class="emoji">🙌</span>
+      </div>
+
+      <input id="input" autocomplete="off" placeholder="Digite uma mensagem..." />
+      <button type="submit">Enviar</button>
     </form>
 
     <script src="/socket.io/socket.io.js"></script>
