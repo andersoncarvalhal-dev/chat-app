@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
 });
 
 // O alojamento injeta a porta correta na variável process.env.PORT
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
   console.log(`Servidor a correr na porta ${PORT}`);
