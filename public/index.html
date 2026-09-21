@@ -11,7 +11,7 @@
     <div id="login-overlay">
       <div id="login-modal">
         <h2>Bem-vindo!</h2>
-        <p>Introduza o seu nome para entrar no chat:</p>
+        <p>Introduza o seu nome para entrar:</p>
         <input type="text" id="username-input" placeholder="O seu nome..." autocomplete="off">
         <button id="join-btn">Entrar no Chat</button>
       </div>
@@ -23,19 +23,21 @@
 
     <form id="form" action="">
       <button type="button" id="emoji-btn">😀</button>
+      
+      <!-- NOVO: Botões de Anexo e Áudio -->
+      <button type="button" id="attach-btn">📎</button>
+      <input type="file" id="file-input" accept="image/*" style="display: none;">
+      
       <div id="emoji-picker" class="hidden">
-        <span class="emoji">😂</span>
-        <span class="emoji">❤️</span>
-        <span class="emoji">😍</span>
-        <span class="emoji">👍</span>
-        <span class="emoji">🙏</span>
-        <span class="emoji">🔥</span>
-        <span class="emoji">😊</span>
-        <span class="emoji">🙌</span>
+        <span class="emoji">😂</span><span class="emoji">❤️</span><span class="emoji">😍</span><span class="emoji">👍</span>
+        <span class="emoji">🙏</span><span class="emoji">🔥</span><span class="emoji">😊</span><span class="emoji">🙌</span>
       </div>
 
-      <input id="input" autocomplete="off" placeholder="Digite uma mensagem..." />
-      <button type="submit">Enviar</button>
+      <input id="input" autocomplete="off" placeholder="Mensagem..." />
+      
+      <!-- NOVO: Botão de Microfone -->
+      <button type="button" id="mic-btn">🎤</button>
+      <button type="submit" id="send-btn">Enviar</button>
     </form>
 
     <script src="/socket.io/socket.io.js"></script>
