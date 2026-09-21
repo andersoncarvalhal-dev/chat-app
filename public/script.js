@@ -17,7 +17,6 @@ function getUserColor(name) {
   return colors[Math.abs(hash) % colors.length];
 }
 
-// Converte a data do banco de dados para formato HH:MM
 function formatTime(dateString) {
   if (!dateString) return '';
   const date = new Date(dateString);
@@ -36,7 +35,6 @@ function joinChat() {
 joinBtn.addEventListener('click', joinChat);
 usernameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') joinChat(); });
 
-// === ENVIO DE MENSAGENS DE TEXTO ===
 document.getElementById('emoji-btn').addEventListener('click', () => {
   document.getElementById('emoji-picker').classList.toggle('hidden');
 });
@@ -59,7 +57,6 @@ form.addEventListener('submit', (e) => {
   }
 });
 
-// === ENVIO DE IMAGENS ===
 const attachBtn = document.getElementById('attach-btn');
 const fileInput = document.getElementById('file-input');
 
@@ -75,14 +72,13 @@ fileInput.addEventListener('change', () => {
   }
 
   const reader = new FileReader();
-  reader.readAsDataURL(file); // Converte para Base64
+  reader.readAsDataURL(file);
   reader.onload = () => {
     socket.emit('chat message', { type: 'image', content: reader.result });
-    fileInput.value = ''; // Limpa o input
+    fileInput.value = '';
   };
 });
 
-// === ENVIO DE ÁUDIO ===
 let mediaRecorder;
 let audioChunks = [];
 const micBtn = document.getElementById('mic-btn');
@@ -90,7 +86,8 @@ const micBtn = document.getElementById('mic-btn');
 micBtn.addEventListener('click', async () => {
   if (mediaRecorder && mediaRecorder.state === 'recording') {
     mediaRecorder.stop();
-    micBtn.innerText = '🎤';
+    // Volta o ícone de microfone normal
+    micBtn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
     micBtn.classList.remove('recording');
     return;
   }
@@ -113,14 +110,14 @@ micBtn.addEventListener('click', async () => {
     };
 
     mediaRecorder.start();
-    micBtn.innerText = '⏹️';
+    // Troca para o ícone de 'Stop' (parar gravação)
+    micBtn.innerHTML = '<i class="fa-solid fa-stop"></i>';
     micBtn.classList.add('recording');
   } catch (err) {
     alert('Não foi possível aceder ao microfone.');
   }
 });
 
-// === INDICADOR DE DIGITAÇÃO ===
 input.addEventListener('input', () => {
   if (username) socket.emit('typing', username);
   clearTimeout(typingTimer);
@@ -133,19 +130,16 @@ socket.on('typing', (user) => {
 });
 socket.on('stop typing', () => typingIndicator.style.display = 'none');
 
-// === RENDERIZAR MENSAGENS NO ECRÃ ===
 function renderMessage(data) {
   const item = document.createElement('li');
   const timeHTML = `<span class="msg-time">${formatTime(data.created_at)}</span>`;
   let contentHTML = '';
 
-  // Define se é texto, imagem ou áudio
   if (data.type === 'image') {
     contentHTML = `<img src="${data.content}" class="msg-image" />`;
   } else if (data.type === 'audio') {
     contentHTML = `<audio controls src="${data.content}" class="msg-audio"></audio>`;
   } else {
-    // Proteção XSS apenas para textos
     let safeText = data.content ? data.content.replace(/</g, "&lt;").replace(/>/g, "&gt;") : '';
     contentHTML = `<div class="msg-text">${safeText}</div>`;
   }

@@ -6,32 +6,50 @@ body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 0; paddi
 #username-input:focus { border-color: #25D366; }
 #join-btn { background: #25D366; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
 #messages { list-style-type: none; margin: 0; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
-#messages li { padding: 8px 12px; border-radius: 8px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); max-width: 85%; position: relative; }
 
-/* Estilos de mídia e texto */
+/* FIX DAS DATAS E BALÕES */
+#messages li { 
+  padding: 8px 12px; 
+  border-radius: 8px; 
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1); 
+  max-width: 85%; 
+  position: relative; 
+  display: flex;          /* Obriga o conteúdo a alinhar-se perfeitamente */
+  flex-direction: column; /* Coloca Nome em cima, Mensagem no meio, Data em baixo */
+}
+
 .msg-text { white-space: pre-wrap; word-wrap: break-word; font-size: 15px; color: #111b21; }
-.msg-image { max-width: 100%; border-radius: 8px; margin-top: 5px; max-height: 300px; object-fit: contain; }
-.msg-audio { max-width: 250px; margin-top: 5px; height: 40px; }
+.msg-image { max-width: 100%; border-radius: 8px; margin-top: 2px; max-height: 300px; object-fit: contain; }
+.msg-audio { max-width: 100%; margin-top: 2px; height: 40px; }
 
-/* A hora da mensagem */
-.msg-time { font-size: 11px; color: #888; float: right; margin-top: 8px; margin-left: 15px; }
+/* A hora da mensagem agora desce perfeitamente */
+.msg-time { font-size: 11px; color: #888; align-self: flex-end; margin-top: 4px; }
 
 .message-mine { align-self: flex-end; background: #D9FDD3; border-top-right-radius: 0 !important; }
 .message-other { align-self: flex-start; background: #ffffff; border-top-left-radius: 0 !important; }
 .message-system { align-self: center; background: rgba(0,0,0,0.05); border-radius: 10px; font-size: 12px; padding: 5px 12px; color: #555; box-shadow: none !important; }
 .user-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; display: block; }
 #typing-indicator { font-size: 13px; color: #666; font-style: italic; padding: 0 20px; position: fixed; bottom: 65px; display: none; background: #EFEAE2; width: 100%; }
-#form { background: #f0f0f0; padding: 10px; position: fixed; bottom: 0; left: 0; width: 100%; display: flex; box-sizing: border-box; align-items: center; gap: 10px; }
 
-/* Botões da barra inferior */
-#emoji-btn, #attach-btn, #mic-btn { background: none; border: none; font-size: 22px; cursor: pointer; padding: 5px; color: #54656f; transition: 0.2s; }
+/* FIX DA BARRA INFERIOR NO MOBILE */
+#form { background: #f0f0f0; padding: 10px 5px; position: fixed; bottom: 0; left: 0; width: 100%; display: flex; box-sizing: border-box; align-items: center; gap: 5px; }
+
+/* min-width: 0 impede que o input empurre os botões para fora do ecrã */
+#input { border: none; padding: 12px 15px; flex-grow: 1; border-radius: 25px; font-size: 16px; outline: none; min-width: 0; }
+
+#emoji-btn, #attach-btn, #mic-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 8px; color: #54656f; flex-shrink: 0; }
 #emoji-picker { position: absolute; bottom: 60px; left: 10px; background: white; padding: 10px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: flex; gap: 10px; flex-wrap: wrap; max-width: 200px; }
 .hidden { display: none !important; }
 .emoji { font-size: 24px; cursor: pointer; transition: transform 0.1s; }
 .emoji:hover { transform: scale(1.2); }
-#input { border: none; padding: 12px 15px; flex-grow: 1; border-radius: 25px; font-size: 16px; outline: none; }
-#send-btn { background: #00a884; border: none; padding: 12px 20px; color: white; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold; }
+
+/* Novo botão de enviar redondo igual ao WhatsApp */
+#send-btn { 
+  background: #00a884; color: white; border: none; border-radius: 50%; 
+  width: 44px; height: 44px; cursor: pointer; font-size: 18px; 
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; 
+}
 
 /* Animação quando está a gravar áudio */
-.recording { color: red !important; animation: pulse 1s infinite; }
+.recording { color: #f15c6d !important; animation: pulse 1s infinite; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }

@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chat em Tempo Real</title>
+    <!-- NOVO: Importando ícones profissionais (FontAwesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
@@ -22,10 +24,9 @@
     <div id="typing-indicator"></div>
 
     <form id="form" action="">
-      <button type="button" id="emoji-btn">😀</button>
-      
-      <!-- NOVO: Botões de Anexo e Áudio -->
-      <button type="button" id="attach-btn">📎</button>
+      <!-- Ícones atualizados -->
+      <button type="button" id="emoji-btn"><i class="fa-regular fa-face-smile"></i></button>
+      <button type="button" id="attach-btn"><i class="fa-solid fa-paperclip"></i></button>
       <input type="file" id="file-input" accept="image/*" style="display: none;">
       
       <div id="emoji-picker" class="hidden">
@@ -35,9 +36,9 @@
 
       <input id="input" autocomplete="off" placeholder="Mensagem..." />
       
-      <!-- NOVO: Botão de Microfone -->
-      <button type="button" id="mic-btn">🎤</button>
-      <button type="submit" id="send-btn">Enviar</button>
+      <button type="button" id="mic-btn"><i class="fa-solid fa-microphone"></i></button>
+      <!-- Botão de enviar agora é um botão redondo com ícone -->
+      <button type="submit" id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
     </form>
 
     <script src="/socket.io/socket.io.js"></script>
