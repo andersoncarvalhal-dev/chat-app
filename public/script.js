@@ -129,3 +129,8 @@ document.addEventListener('visibilitychange', () => {
     if (username) socket.emit('stop typing');
   }
 });
+
+// NOVO: Escuta o sinal do servidor para limpar o ecrã
+socket.on('clear chat', () => {
+  messages.innerHTML = ''; // Apaga todos os balões de mensagem do ecrã instantaneamente
+});

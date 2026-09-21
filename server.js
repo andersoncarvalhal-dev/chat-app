@@ -58,7 +58,27 @@ io.on('connection', (socket) => {
   });
 
   socket.on('chat message', async (msg) => {
-    // NOVO: Salva a mensagem no Banco de Dados
+    
+    // NOVO: Comando secreto para limpar o banco de dados
+    if (msg.trim() === '/limpar') {
+      if (process.env.DATABASE_URL) {
+        try {
+          // Apaga todos os registos da tabela messages
+          await pool.query('DELETE FROM messages');
+          
+          // Manda um sinal para todos os ecrãs apagarem o que têm lá
+          io.emit('clear chat');
+          
+          // Manda uma mensagem de sistema a avisar
+          io.emit('chat message', { user: 'Sistema', text: '🧹 O histórico do chat foi apagado pelo administrador.' });
+        } catch (err) {
+          console.error('Erro ao limpar banco:', err);
+        }
+      }
+      return; // O "return" faz o código parar aqui e não envia a palavra "/limpar" para o chat
+    }
+
+    // Se não for o comando secreto, salva e envia a mensagem normalmente
     if (process.env.DATABASE_URL && socket.username) {
       try {
         await pool.query('INSERT INTO messages (username, text) VALUES ($1, $2)', [socket.username, msg]);
@@ -69,19 +89,4 @@ io.on('connection', (socket) => {
     
     io.emit('chat message', { user: socket.username, text: msg });
   });
-
-  socket.on('typing', (user) => { socket.broadcast.emit('typing', user); });
-  socket.on('stop typing', () => { socket.broadcast.emit('stop typing'); });
-
-  socket.on('disconnect', () => {
-    socket.broadcast.emit('stop typing');
-    if (socket.username) {
-      io.emit('chat message', { user: 'Sistema', text: `${socket.username} saiu do chat.` });
-    }
-  });
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`Servidor a correr na porta ${PORT}`);
 });
