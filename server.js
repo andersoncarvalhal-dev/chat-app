@@ -7,7 +7,7 @@ const { Pool } = require('pg');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: "*", methods: ["GET", "POST"] }
+  cors: { origin: ["https://chat.pimencon.com.br", "chat-app-y554.onrender.com"], methods: ["GET", "POST"] }
 });
 
 const pool = new Pool({
