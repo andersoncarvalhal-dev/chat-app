@@ -95,7 +95,7 @@ io.on('connection', (socket) => {
       }
     }
     
-    // Repassa a mensagem para todos, incluindo a hora exata
+    
     io.emit('chat message', { 
       user: socket.username, 
       content: content, 

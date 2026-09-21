@@ -86,7 +86,6 @@ const micBtn = document.getElementById('mic-btn');
 micBtn.addEventListener('click', async () => {
   if (mediaRecorder && mediaRecorder.state === 'recording') {
     mediaRecorder.stop();
-    // Volta o ícone de microfone normal
     micBtn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
     micBtn.classList.remove('recording');
     return;
@@ -110,11 +109,10 @@ micBtn.addEventListener('click', async () => {
     };
 
     mediaRecorder.start();
-    // Troca para o ícone de 'Stop' (parar gravação)
     micBtn.innerHTML = '<i class="fa-solid fa-stop"></i>';
     micBtn.classList.add('recording');
   } catch (err) {
-    alert('Não foi possível aceder ao microfone.');
+    alert('Não foi possível acessar o microfone.');
   }
 });
 
@@ -125,7 +123,7 @@ input.addEventListener('input', () => {
 });
 
 socket.on('typing', (user) => {
-  typingIndicator.innerText = `${user} está a escrever...`;
+  typingIndicator.innerText = `${user} Digitando...`;
   typingIndicator.style.display = 'block';
 });
 socket.on('stop typing', () => typingIndicator.style.display = 'none');
