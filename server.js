@@ -16,15 +16,28 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false } // Necessário para serviços na nuvem
 });
 
-// NOVO: Cria a tabela de mensagens automaticamente ao ligar o servidor
-pool.query(`
-  CREATE TABLE IF NOT EXISTS messages (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50),
-    text TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  )
-`).catch(err => console.error('Erro ao criar tabela:', err));
+// Função para inicializar o banco de dados de forma segura
+async function initDB() {
+  if (process.env.DATABASE_URL) {
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS messages (
+          id SERIAL PRIMARY KEY,
+          username VARCHAR(50),
+          text TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      console.log("✅ Tabela 'messages' verificada/criada com sucesso no PostgreSQL.");
+    } catch (err) {
+      console.error("❌ ERRO GRAVE ao criar tabela no PostgreSQL:", err.message);
+      // Não fazemos o servidor "crashar", ele apenas avisa o erro.
+    }
+  } else {
+    console.log("⚠️ Nenhuma DATABASE_URL encontrada. O chat vai funcionar apenas na memória (sem histórico).");
+  }
+}
+initDB();
 
 
 app.use(express.static(path.join(__dirname, 'public')));
