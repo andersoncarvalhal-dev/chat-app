@@ -11,7 +11,6 @@ const joinBtn = document.getElementById('join-btn');
 let username = '';
 let typingTimer;
 
-// Função para gerar sempre a mesma cor para o mesmo nome
 function getUserColor(name) {
   const colors = ['#35CD96', '#ff5252', '#448aff', '#ffb300', '#ab47bc', '#00bfa5', '#e91e63'];
   let hash = 0;
@@ -35,7 +34,6 @@ usernameInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') joinChat();
 });
 
-// Lógica dos Emojis
 document.getElementById('emoji-btn').addEventListener('click', () => {
   document.getElementById('emoji-picker').classList.toggle('hidden');
 });
@@ -48,7 +46,6 @@ document.querySelectorAll('.emoji').forEach(emoji => {
   });
 });
 
-// Lógica de envio (Esconde o emoji picker se estiver aberto)
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   if (input.value && username) {
@@ -59,17 +56,16 @@ form.addEventListener('submit', (e) => {
   }
 });
 
-// Evento: Alguém está a escrever
 input.addEventListener('input', () => {
   if (username) socket.emit('typing', username);
   clearTimeout(typingTimer);
   typingTimer = setTimeout(() => {
     socket.emit('stop typing');
-  }, 1500); // Para de mostrar após 1.5s sem digitar
+  }, 1500); 
 });
 
 socket.on('typing', (user) => {
-  typingIndicator.innerText = `${user} Está Digitando...`;
+  typingIndicator.innerText = `${user} está a escrever...`;
   typingIndicator.style.display = 'block';
 });
 
@@ -77,7 +73,6 @@ socket.on('stop typing', () => {
   typingIndicator.style.display = 'none';
 });
 
-// Função auxiliar para desenhar uma mensagem no ecrã
 function renderMessage(data) {
   const item = document.createElement('li');
   const safeText = data.text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -99,7 +94,7 @@ function renderMessage(data) {
   window.scrollTo(0, document.body.scrollHeight);
 }
 
-// NOVO: Receber o histórico ao entrar
+// Receber o histórico ao entrar
 socket.on('chat history', (historyArray) => {
   historyArray.forEach(msg => {
     renderMessage(msg);
@@ -111,26 +106,24 @@ socket.on('chat message', (data) => {
   renderMessage(data);
 });
 
-// 1. Quando o Socket se reconectar com sucesso
+// Escuta o sinal do servidor para limpar o ecrã (da Rota /limpar-dados)
+socket.on('clear chat', () => {
+  messages.innerHTML = '';
+});
+
+// Quando o Socket se reconectar com sucesso (Mobile e quedas)
 socket.on('connect', () => {
   if (username) {
-    // Se quiser, pode limpar a lista antiga de mensagens aqui para não duplicar, 
-    // mas por agora vamos focar em reconectar o utilizador.
     socket.emit('join', username);
     socket.emit('stop typing');
   }
 });
 
-// 2. Acorda o sistema quando volta ao Chrome
+// Acorda o sistema quando volta ao Chrome
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     if (socket.disconnected) socket.connect();
   } else {
     if (username) socket.emit('stop typing');
   }
-});
-
-// NOVO: Escuta o sinal do servidor para limpar o ecrã
-socket.on('clear chat', () => {
-  messages.innerHTML = ''; // Apaga todos os balões de mensagem do ecrã instantaneamente
 });

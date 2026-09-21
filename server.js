@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
-const { Pool } = require('pg'); // NOVO: Importa o PostgreSQL
+const { Pool } = require('pg');
 
 const app = express();
 const server = http.createServer(app);
@@ -10,10 +10,10 @@ const io = new Server(server, {
   cors: { origin: "*", methods: ["GET", "POST"] }
 });
 
-// NOVO: Configuração do Banco de Dados
+// Configuração do Banco de Dados
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false } // Necessário para serviços na nuvem
+  ssl: { rejectUnauthorized: false }
 });
 
 // Função para inicializar o banco de dados de forma segura
@@ -31,7 +31,6 @@ async function initDB() {
       console.log("✅ Tabela 'messages' verificada/criada com sucesso no PostgreSQL.");
     } catch (err) {
       console.error("❌ ERRO GRAVE ao criar tabela no PostgreSQL:", err.message);
-      // Não fazemos o servidor "crashar", ele apenas avisa o erro.
     }
   } else {
     console.log("⚠️ Nenhuma DATABASE_URL encontrada. O chat vai funcionar apenas na memória (sem histórico).");
@@ -39,11 +38,26 @@ async function initDB() {
 }
 initDB();
 
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// ROTA PARA EXCLUIR OS DADOS DO BANCO
+app.get('/limpar-dados', async (req, res) => {
+  if (!process.env.DATABASE_URL) {
+    return res.status(400).send("⚠️ Banco de dados não configurado no servidor.");
+  }
+  
+  try {
+    await pool.query('DELETE FROM messages');
+    io.emit('clear chat'); // Avisa os navegadores para limparem o ecrã
+    res.send("<h1>✅ Banco de dados limpo com sucesso!</h1><p><a href='/'>Voltar para o chat</a></p>");
+  } catch (err) {
+    console.error("Erro ao limpar banco via rota:", err);
+    res.status(500).send("❌ Erro ao limpar o banco de dados.");
+  }
 });
 
 io.on('connection', (socket) => {
@@ -51,16 +65,14 @@ io.on('connection', (socket) => {
   socket.on('join', async (username) => {
     socket.username = username;
     
-    // NOVO: Puxa as últimas 50 mensagens do Banco de Dados
+    // Puxa as últimas 50 mensagens do Banco de Dados
     if (process.env.DATABASE_URL) {
       try {
-        // Pega as últimas 50 mensagens e ordena da mais antiga para a mais nova
         const result = await pool.query(`
           SELECT username as user, text 
           FROM (SELECT id, username, text FROM messages ORDER BY id DESC LIMIT 50) AS sub 
           ORDER BY id ASC;
         `);
-        // Envia o histórico só para a pessoa que acabou de entrar
         socket.emit('chat history', result.rows);
       } catch (err) {
         console.error('Erro ao buscar histórico:', err);
@@ -71,27 +83,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('chat message', async (msg) => {
-    
-    // NOVO: Comando secreto para limpar o banco de dados
-    if (msg.trim() === '/limpar') {
-      if (process.env.DATABASE_URL) {
-        try {
-          // Apaga todos os registos da tabela messages
-          await pool.query('DELETE FROM messages');
-          
-          // Manda um sinal para todos os ecrãs apagarem o que têm lá
-          io.emit('clear chat');
-          
-          // Manda uma mensagem de sistema a avisar
-          io.emit('chat message', { user: 'Sistema', text: '🧹 O histórico do chat foi apagado pelo administrador.' });
-        } catch (err) {
-          console.error('Erro ao limpar banco:', err);
-        }
-      }
-      return; // O "return" faz o código parar aqui e não envia a palavra "/limpar" para o chat
-    }
-
-    // Se não for o comando secreto, salva e envia a mensagem normalmente
+    // Salva a mensagem no Banco de Dados
     if (process.env.DATABASE_URL && socket.username) {
       try {
         await pool.query('INSERT INTO messages (username, text) VALUES ($1, $2)', [socket.username, msg]);
@@ -99,7 +91,21 @@ io.on('connection', (socket) => {
         console.error('Erro ao salvar mensagem:', err);
       }
     }
-    
     io.emit('chat message', { user: socket.username, text: msg });
   });
+
+  socket.on('typing', (user) => { socket.broadcast.emit('typing', user); });
+  socket.on('stop typing', () => { socket.broadcast.emit('stop typing'); });
+
+  socket.on('disconnect', () => {
+    socket.broadcast.emit('stop typing');
+    if (socket.username) {
+      io.emit('chat message', { user: 'Sistema', text: `${socket.username} saiu do chat.` });
+    }
+  });
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Servidor a correr na porta ${PORT}`);
 });

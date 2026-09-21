@@ -3,7 +3,7 @@ body {
   margin: 0; 
   padding: 0;
   padding-bottom: 85px; 
-  background-color: #EFEAE2; /* Fundo autêntico do WhatsApp */
+  background-color: #EFEAE2;
 }
 
 #login-overlay {
@@ -28,10 +28,9 @@ body {
   position: relative;
 }
 
-/* NOVO: Formatação para textos grandes */
 .msg-text {
-  white-space: pre-wrap; /* Mantém as quebras de linha */
-  word-wrap: break-word; /* Evita que palavras longas quebrem a tela */
+  white-space: pre-wrap; 
+  word-wrap: break-word; 
   font-size: 15px;
   color: #111b21;
 }
@@ -40,7 +39,6 @@ body {
 .message-other { align-self: flex-start; background: #ffffff; border-top-left-radius: 0 !important; }
 .message-system { align-self: center; background: rgba(0,0,0,0.05); border-radius: 10px; font-size: 12px; padding: 5px 12px; color: #555; box-shadow: none !important; }
 
-/* Nomes coloridos */
 .user-name { font-weight: bold; font-size: 13px; margin-bottom: 4px; display: block; }
 
 #typing-indicator {
